@@ -6,6 +6,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/src/ViewRenderer.cpp
     ${CMAKE_SOURCE_DIR}/src/TileFactory.cpp
     ${CMAKE_SOURCE_DIR}/src/GameMap.cpp
+    ${CMAKE_SOURCE_DIR}/src/Game.cpp
     ${CMAKE_SOURCE_DIR}/src/handler/EventHandler.cpp
     ${CMAKE_SOURCE_DIR}/src/handler/InputEventHandler.cpp
 

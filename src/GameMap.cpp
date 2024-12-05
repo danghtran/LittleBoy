@@ -96,8 +96,11 @@ MapLine* GameMap::createLineAt(int y)
 	case 1:
 		tileSprite = tileFactory->getSprite("res/river.png");
 		break;
+	case 2:
+		tileSprite = tileFactory->getSprite("res/street.png");
+		break;
 	default:
-		tileSprite = tileFactory->getSprite("res/grass.png");
+		tileSprite = tileFactory->getSprite("res/grassb.png");
 		break;
 	}
 	return new MapLine(y, tileSprite);
