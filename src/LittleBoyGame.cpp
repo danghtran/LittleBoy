@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <ViewRenderer.h>
 #include <InputEventHandler.h>
-#include <GameMap.h>
+#include <Game.h>
 
 using namespace std;
 
@@ -17,12 +17,11 @@ int main(int argc, char* argv[]) {
     else
     {
         
-        GameMap gameMap = GameMap(600, 600);
-        gameMap.init();
+        Game game = Game();
         
         bool quit = false;
         int delay = 1000 / 20;
-        int speed = 1;
+  
         while (!quit)
         {
             // adjust speed here
@@ -35,14 +34,14 @@ int main(int argc, char* argv[]) {
                 quit = true;
                 break;
             } 
-            gameMap.scroll(speed);
+            game.update();
             int endLoop = SDL_GetTicks() - startLoop;
             if (endLoop < delay) 
             {
                 SDL_Delay(delay - endLoop);
             }
         }
-        gameMap.clear();
+        game.clear();
     }
    
     //Free resources and close SDL
