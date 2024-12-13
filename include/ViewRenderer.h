@@ -6,8 +6,6 @@
 
 using namespace std;
 
-class MapLine;
-
 class ViewRenderer
 {
 public:
@@ -18,7 +16,7 @@ public:
 	static void clearInstance();
 
 	SDL_Texture* loadTexture(std::string path);
-	void renderLine(MapLine* line);
+	void renderSprite(SDL_Texture* texture, SDL_Rect* spriteRect, SDL_Rect* renderRect);
 	void commitChange();
 private:
 	// Singleton

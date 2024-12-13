@@ -4,12 +4,14 @@ project(LittleBoy)
 set(SOURCES 
     ${CMAKE_SOURCE_DIR}/src/LittleBoyGame.cpp
     ${CMAKE_SOURCE_DIR}/src/ViewRenderer.cpp
-    ${CMAKE_SOURCE_DIR}/src/TileFactory.cpp
-    ${CMAKE_SOURCE_DIR}/src/GameMap.cpp
+    ${CMAKE_SOURCE_DIR}/src/ui/Sprite.cpp
+    ${CMAKE_SOURCE_DIR}/src/ui/GameMap.cpp
     ${CMAKE_SOURCE_DIR}/src/Game.cpp
+    ${CMAKE_SOURCE_DIR}/src/Actor.cpp
+    ${CMAKE_SOURCE_DIR}/src/ui/Drawable.cpp
+    ${CMAKE_SOURCE_DIR}/src/ui/Theme.cpp
     ${CMAKE_SOURCE_DIR}/src/handler/EventHandler.cpp
     ${CMAKE_SOURCE_DIR}/src/handler/InputEventHandler.cpp
-
 )
 
 add_executable(LittleBoyGame ${SOURCES})

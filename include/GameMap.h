@@ -1,71 +1,131 @@
 #pragma once
-#include <TileFactory.h>
+#include <Sprite.h>
+#include <Drawable.h>
+#include <ViewRenderer.h>
+#include <Theme.h>
 #include <list>
 
 using namespace std;
+
+class MapTile: public Drawable
+{
+public:
+	MapTile(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : Drawable(texture, sprite, render) { obstacle = NULL; };
+	~MapTile();
+
+	void scroll(int delta);
+	void setObstacle(PhysicObject* physicObj);
+private:
+	PhysicObject* obstacle;
+};
 
 template <class T>
 class BaseMap
 {
 public:
-	
+	void clear();
+	virtual void init() = 0;
+	virtual void scroll(int delta) = 0;
+	virtual void render(ViewRenderer* viewRenderer) = 0;
+	BaseMap();
+	virtual ~BaseMap();
 protected:
-	int width;
-	int height;
+	std::list<T*> elements;
 };
 
-class MapTile
-{
-public:
-	MapTile(int xAxis, int yAxis, SDL_Rect* sprite);
-	~MapTile();
-
-	SDL_Rect* getSpriteBox();
-	int getX();
-	int getY();
-
-	void scroll(int delta);
-
-private:
-	// For render quad
-	int x;
-	int y;
-	// For sprite box
-	SDL_Rect* spriteBox;
-};
-
-class MapLine
+class MapLine: BaseMap<MapTile>
 {
 private:
 	int y;
-	SDL_Texture* spriteTexture;
-	std::list<MapTile*> tiles;
 public:
-	MapLine(int yAxis, TileSprite* spriteSheet);
+	MapLine(int yAxis, SpriteSheet* spriteSheet);
 	~MapLine();
 
-	std::list<MapTile*> getTiles();
-	SDL_Texture* getSpriteTexture();
 	int getPreviousLineY();
-
-	void scroll(int delta);
 	bool isOutOfScreen(int max);
-	bool isAtScreenTop();
+	void generateObstacles();
+
+	bool isPassedScreenTop();
+	void scroll(int delta);
+	void init();
+	void render(ViewRenderer* viewRenderer);
+	using BaseMap::clear;
 };
 
-class GameMap
+class GameMap: BaseMap<MapLine>
 {
 private:
-	std::list<MapLine*> lines;
+
 	int width;
 	int height;
+	Theme theme;
 	MapLine* createLineAt(int y);
 public:
 	GameMap(int w, int h);
 	~GameMap();
 	void init();
 	void scroll(int delta);
-	void clear();
+	void render(ViewRenderer* viewRenderer);
+	using BaseMap::clear;
+	void applyTheme(Theme theme);
 };
 
+/**
+	FACTORY
+**/
 
+class TileFactory
+{
+public:
+	TileFactory();
+	virtual ~TileFactory();
+	SpriteSheet* getObstacle(Theme theme);
+	SpriteSheet* getTile(Theme theme);
+	virtual MapLine* getLine(int y, Theme theme) = 0;
+protected:
+	virtual TileType getType() = 0;
+	SpriteSheet* getSpriteSheetInternal(std::string path);
+	std::string getObstaclePath(Theme theme);
+	std::string getTilePath(Theme theme);
+};
+
+class GrassTileFactory : TileFactory
+{
+public:
+	~GrassTileFactory();
+	MapLine* getLine(int y, Theme theme) override;
+	static TileFactory* getInstance();
+protected:
+	TileType getType() override;
+private:
+	GrassTileFactory();
+	static GrassTileFactory* instance;
+};
+
+class WaterTileFactory : TileFactory
+{
+public:
+	~WaterTileFactory();
+	MapLine* getLine(int y, Theme theme) override;
+	static TileFactory* getInstance();
+protected:
+	TileType getType() override;
+private:
+	WaterTileFactory();
+
+	static WaterTileFactory* instance;
+};
+
+class RoadTileFactory : TileFactory
+{
+public:
+	~RoadTileFactory();
+	MapLine* getLine(int y, Theme theme) override;
+	static TileFactory* getInstance();
+protected:
+	TileType getType() override;
+private:
+	RoadTileFactory();
+
+	static RoadTileFactory* instance;
+};

@@ -1,30 +1,37 @@
 #pragma once
-#include <ViewRenderer.h>;
+#include <SDL.h>
+#include <ViewRenderer.h>
 
 class Drawable
 {
-private:
+protected:
 	SDL_Texture* texture;
-	int height;
-	int width;
+	SDL_Rect* spriteRect;
+	SDL_Rect* renderRect;
 public:
-	virtual void draw();
+	Drawable(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) :
+		texture(texture), spriteRect(sprite), renderRect(render) {}
+	virtual ~Drawable();
+	void draw();
+	void draw(ViewRenderer* viewRenderer);
 };
 
-class Tile : public Drawable
+class PhysicObject: public Drawable
 {
 public:
-	virtual bool isPassable();
-	virtual bool isStretch();
+	PhysicObject(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : Drawable(texture, sprite, render) {};
+	virtual ~PhysicObject();
+	virtual bool isPassable() = 0;
+private:
+
 };
 
-class Obstacle : public Tile
+class MovableObject: public PhysicObject
 {
-	
-};
+public:
+	MovableObject(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : PhysicObject(texture, sprite, render) {};
+	virtual ~MovableObject();
+	virtual bool isPassable() = 0;
+private:
 
-//class MapTile : public Tile
-//{
-//private:
-	//Obstacle* obstacle;
-//};
+};

@@ -1,6 +1,5 @@
 #include <ViewRenderer.h>
 #include <iostream>
-#include <GameMap.h>
 
 
 bool ViewRenderer::init(int w, int h)
@@ -88,6 +87,9 @@ SDL_Texture* ViewRenderer::loadTexture(std::string path)
     }
     else
     {
+        // Color Keying
+        SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0xFF, 0xFF, 0xFF));
+
         //Create texture from surface pixels
         newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
         if (newTexture == NULL)
@@ -102,14 +104,9 @@ SDL_Texture* ViewRenderer::loadTexture(std::string path)
     return newTexture;
 }
 
-void ViewRenderer::renderLine(MapLine* line)
+void ViewRenderer::renderSprite(SDL_Texture* texture, SDL_Rect* spriteRect, SDL_Rect* renderRect)
 {
-    SDL_Texture* spriteTexture = line->getSpriteTexture();
-    for each (MapTile* tile in line->getTiles())
-    {
-        SDL_Rect renderQuad = { tile->getX(), tile->getY(), 50, 50 };
-        SDL_RenderCopy(gRenderer, spriteTexture, tile->getSpriteBox(), &renderQuad);
-    }
+    SDL_RenderCopy(gRenderer, texture, spriteRect, renderRect);
 }
 
 void ViewRenderer::commitChange()
