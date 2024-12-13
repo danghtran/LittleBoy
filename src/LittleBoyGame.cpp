@@ -2,8 +2,14 @@
 #include <ViewRenderer.h>
 #include <InputEventHandler.h>
 #include <Game.h>
+#include <Sprite.h>
 
 using namespace std;
+
+void loadResource()
+{
+
+}
 
 int main(int argc, char* argv[]) {
     ViewRenderer* viewRenderer = ViewRenderer::getInstance();
@@ -35,18 +41,18 @@ int main(int argc, char* argv[]) {
                 break;
             } 
             game.update();
+            game.render(viewRenderer);
             int endLoop = SDL_GetTicks() - startLoop;
             if (endLoop < delay) 
             {
                 SDL_Delay(delay - endLoop);
             }
         }
-        game.clear();
     }
    
     //Free resources and close SDL
     ViewRenderer::clearInstance();
-    TileFactory::clearInstance();
+    SpriteRegister::clearInstance();
     delete inputHandler;
     inputHandler = NULL;
     return 0;
