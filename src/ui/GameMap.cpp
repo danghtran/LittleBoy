@@ -123,7 +123,7 @@ GameMap::GameMap(int w, int h)
 {
 	width = w;
 	height = h;
-	applyTheme(theme);
+	applyTheme(ORIGIN);
 }
 
 GameMap::~GameMap()
@@ -173,6 +173,26 @@ void GameMap::applyTheme(Theme theme)
 {
 	this->theme = theme;
 	// register theme...
+	ThemeRegister* themeRegister = ThemeRegister::getInstance();
+	themeRegister->registerTile(GRASS, theme, "res/grassnb.png");
+	themeRegister->registerTile(WATER, theme, "res/river.png");
+	themeRegister->registerTile(ROAD, theme, "res/street.png");
+	SpriteRegister* spriteRegister = SpriteRegister::getInstance();
+	std::list<SDL_Rect> rects;
+	for (int i = 0; i < 2; ++i) {
+		for (int j = 0; j < 2; ++j) {
+			SDL_Rect defaultRect = SDL_Rect();
+			defaultRect.x = 0 + 50 * i;
+			defaultRect.y = 0 + 50 * j;
+			defaultRect.w = 50;
+			defaultRect.h = 50;
+			rects.push_back(defaultRect);
+		}
+	}
+	
+	spriteRegister->initSprite("res/grassnb.png", rects);
+	spriteRegister->initSprite("res/river.png", rects);
+	spriteRegister->initSprite("res/street.png", rects);
 }
 
 GrassTileFactory* GrassTileFactory::instance;
