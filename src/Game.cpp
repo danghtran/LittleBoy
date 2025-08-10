@@ -10,7 +10,7 @@ Game::Game()
 void Game::clear()
 {
 	delete map;
-	delete player;
+	//delete player;
 }
 
 void Game::render(ViewRenderer* viewRenderer)

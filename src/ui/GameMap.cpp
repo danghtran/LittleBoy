@@ -178,21 +178,10 @@ void GameMap::applyTheme(Theme theme)
 	themeRegister->registerTile(WATER, theme, "res/river.png");
 	themeRegister->registerTile(ROAD, theme, "res/street.png");
 	SpriteRegister* spriteRegister = SpriteRegister::getInstance();
-	std::list<SDL_Rect> rects;
-	for (int i = 0; i < 2; ++i) {
-		for (int j = 0; j < 2; ++j) {
-			SDL_Rect defaultRect = SDL_Rect();
-			defaultRect.x = 0 + 50 * i;
-			defaultRect.y = 0 + 50 * j;
-			defaultRect.w = 50;
-			defaultRect.h = 50;
-			rects.push_back(defaultRect);
-		}
-	}
 	
-	spriteRegister->initSprite("res/grassnb.png", rects);
-	spriteRegister->initSprite("res/river.png", rects);
-	spriteRegister->initSprite("res/street.png", rects);
+	spriteRegister->initSprite("res/grassnb.png", 2, 2);
+	spriteRegister->initSprite("res/river.png", 1, 1);
+	spriteRegister->initSprite("res/street.png", 1, 1);
 }
 
 GrassTileFactory* GrassTileFactory::instance;

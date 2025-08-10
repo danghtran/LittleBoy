@@ -47,9 +47,20 @@ void SpriteRegister::freeSprites()
 	registeredSprite.clear();
 }
 
-void SpriteRegister::initSprite(std::string path, std::list<SDL_Rect> rects)
+void SpriteRegister::initSprite(std::string path, int cols, int rows)
 {
 	SpriteSheet* spriteSheet = new SpriteSheet();
+	std::list<SDL_Rect> rects;
+	for (int i = 0; i < cols; ++i) {
+		for (int j = 0; j < rows; ++j) {
+			SDL_Rect defaultRect = SDL_Rect();
+			defaultRect.x = 0 + 50 * i;
+			defaultRect.y = 0 + 50 * j;
+			defaultRect.w = 50;
+			defaultRect.h = 50;
+			rects.push_back(defaultRect);
+		}
+	}
 	spriteSheet->load(path, rects);
 	registeredSprite[path] = spriteSheet;
 }

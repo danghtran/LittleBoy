@@ -29,7 +29,7 @@ public:
 	static void clearInstance();
 	SpriteSheet* getSpriteSheet(std::string path);
 	void freeSprites();
-	void initSprite(std::string path, std::list<SDL_Rect> rects);
+	void initSprite(std::string path, int cols, int rows);
 private:
 	std::map<std::string, SpriteSheet*> registeredSprite;
 	SpriteRegister();
