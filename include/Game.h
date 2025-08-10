@@ -11,6 +11,7 @@ public:
 	void clear();
 	void render(ViewRenderer* viewRenderer);
 	void initPlayer();
+	void movePlayer(int dir);
 private:
 	GameMap* map;
 	Player* player;

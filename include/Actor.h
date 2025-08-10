@@ -16,6 +16,7 @@ class Player : public Actor
 public:
 	Player(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : Actor(texture, sprite, render) {};
 	~Player();
+	void move(int delX, int delY);
 private:
 
 };

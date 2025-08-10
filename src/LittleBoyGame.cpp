@@ -39,6 +39,18 @@ int main(int argc, char* argv[]) {
             case QUIT:
                 quit = true;
                 break;
+            case MV_U:
+                game.movePlayer(0);
+                break;
+            case MV_R:
+                game.movePlayer(1);
+                break;
+            case MV_D:
+                game.movePlayer(2);
+                break;
+            case MV_L:
+                game.movePlayer(3);
+                break;
             } 
             game.update();
             game.render(viewRenderer);
