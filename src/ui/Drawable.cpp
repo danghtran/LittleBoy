@@ -8,6 +8,11 @@ PhysicObject::~PhysicObject()
 {
 }
 
+void PhysicObject::scroll(int delta)
+{
+	this->renderRect->y += delta;
+}
+
 Drawable::~Drawable()
 {
 	texture = NULL;

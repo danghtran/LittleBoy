@@ -12,11 +12,29 @@ MapTile::~MapTile()
 void MapTile::scroll(int delta)
 {
 	this->renderRect->y += delta;
+	if (obstacle != NULL)
+	{
+		obstacle->scroll(delta);
+	}
 }
 
-void MapTile::setObstacle(PhysicObject* physicObj)
+void MapTile::setObstacle(SDL_Texture* texture, SDL_Rect* sprite)
 {
-	obstacle = physicObj;
+	SDL_Rect* rect = new SDL_Rect();
+	rect->h = this->renderRect->h;
+	rect->w = this->renderRect->w;
+	rect->x = this->renderRect->x;
+	rect->y = this->renderRect->y;
+	obstacle = new StaticObstacle(texture, sprite, rect);
+}
+
+void MapTile::draw(ViewRenderer* viewRenderer)
+{
+	Drawable::draw(viewRenderer);
+	if (obstacle != NULL)
+	{
+		obstacle->draw(viewRenderer);
+	}	
 }
 
 template<class T>
@@ -81,7 +99,7 @@ void MapLine::scroll(int delta)
 
 void MapLine::init()
 {
-	generateObstacles();
+
 }
 
 void MapLine::render(ViewRenderer* viewRenderer)
@@ -92,13 +110,20 @@ void MapLine::render(ViewRenderer* viewRenderer)
 	}
 }
 
+void MapLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
+{
+	for (auto iter = elements.begin(); iter != elements.end(); ++iter)
+	{
+		if (rand() % 5 == 0)
+		{
+			(*iter)->setObstacle(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite());
+		}
+	}
+}
+
 bool MapLine::isOutOfScreen(int max)
 {
 	return y >= max;
-}
-
-void MapLine::generateObstacles()
-{
 }
 
 MapLine* GameMap::createLineAt(int y)
@@ -177,11 +202,13 @@ void GameMap::applyTheme(Theme theme)
 	themeRegister->registerTile(GRASS, theme, "res/grassnb.png");
 	themeRegister->registerTile(WATER, theme, "res/river.png");
 	themeRegister->registerTile(ROAD, theme, "res/street.png");
+	themeRegister->registerObstacle(GRASS, theme, "res/light.png");
 	SpriteRegister* spriteRegister = SpriteRegister::getInstance();
 	
 	spriteRegister->initSprite("res/grassnb.png", 2, 2);
 	spriteRegister->initSprite("res/river.png", 1, 1);
 	spriteRegister->initSprite("res/street.png", 1, 1);
+	spriteRegister->initSprite("res/light.png", 2, 2);
 }
 
 GrassTileFactory* GrassTileFactory::instance;
@@ -258,6 +285,10 @@ MapLine* GrassTileFactory::getLine(int y, Theme theme)
 {
 	SpriteSheet* spriteSheet = getTile(theme);
 	MapLine* mapLine = new MapLine(y, spriteSheet);
+	// add obstacles here
+	SpriteSheet* obstacleSheet = getObstacle(theme);
+	int numObs = rand() % 11;
+	mapLine->generateObstacles(numObs, obstacleSheet);
 	return mapLine;
 }
 
@@ -320,4 +351,11 @@ std::string TileFactory::getTilePath(Theme theme)
 	return themeRegister->getTilePath(getType(), theme);
 }
 
+StaticObstacle::~StaticObstacle()
+{
+}
 
+bool StaticObstacle::isPassable()
+{
+	return false;
+}

@@ -14,7 +14,8 @@ public:
 	~MapTile();
 
 	void scroll(int delta);
-	void setObstacle(PhysicObject* physicObj);
+	void setObstacle(SDL_Texture* texture, SDL_Rect* sprite);
+	void draw(ViewRenderer* viewRenderer) override;
 private:
 	PhysicObject* obstacle;
 };
@@ -43,12 +44,12 @@ public:
 
 	int getPreviousLineY();
 	bool isOutOfScreen(int max);
-	void generateObstacles();
 
 	bool isPassedScreenTop();
 	void scroll(int delta);
 	void init();
 	void render(ViewRenderer* viewRenderer);
+	void generateObstacles(int num, SpriteSheet* obstacleSheet);
 	using BaseMap::clear;
 };
 
@@ -68,6 +69,14 @@ public:
 	void render(ViewRenderer* viewRenderer);
 	using BaseMap::clear;
 	void applyTheme(Theme theme);
+};
+
+class StaticObstacle : public PhysicObject
+{
+public:
+	StaticObstacle(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : PhysicObject(texture, sprite, render) {};
+	~StaticObstacle();
+	bool isPassable();
 };
 
 /**
