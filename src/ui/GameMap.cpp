@@ -110,7 +110,7 @@ void MapLine::render(ViewRenderer* viewRenderer)
 	}
 }
 
-void MapLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
+void GrassLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
 {
 	for (auto iter = elements.begin(); iter != elements.end(); ++iter)
 	{
@@ -119,6 +119,45 @@ void MapLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
 			(*iter)->setObstacle(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite());
 		}
 	}
+}
+
+void RoadLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
+{
+	SDL_Rect* rect = new SDL_Rect();
+	rect->h = 50;
+	rect->w = 50;
+	rect->x = 100;
+	rect->y = y;
+	MovingObstacle* obstacle = new MovingObstacle(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite(), rect);
+	obstacles.push_back(obstacle);
+}
+
+void RoadLine::scroll(int delta)
+{
+	for each (auto obs in obstacles)
+	{
+		obs->scroll(delta);
+	}
+	MapLine::scroll(delta);
+}
+
+void RoadLine::render(ViewRenderer* viewRenderer)
+{
+	MapLine::render(viewRenderer);
+	for each (auto obs in obstacles)
+	{
+		obs->draw(viewRenderer);
+	}
+}
+
+void WaterLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
+{
+
+}
+
+void WaterLine::scroll(int delta)
+{
+	MapLine::scroll(delta);
 }
 
 bool MapLine::isOutOfScreen(int max)
@@ -203,12 +242,14 @@ void GameMap::applyTheme(Theme theme)
 	themeRegister->registerTile(WATER, theme, "res/river.png");
 	themeRegister->registerTile(ROAD, theme, "res/street.png");
 	themeRegister->registerObstacle(GRASS, theme, "res/light.png");
+	themeRegister->registerObstacle(ROAD, theme, "res/car.png");
 	SpriteRegister* spriteRegister = SpriteRegister::getInstance();
 	
 	spriteRegister->initSprite("res/grassnb.png", 2, 2);
 	spriteRegister->initSprite("res/river.png", 1, 1);
 	spriteRegister->initSprite("res/street.png", 1, 1);
 	spriteRegister->initSprite("res/light.png", 2, 2);
+	spriteRegister->initSprite("res/car.png", 1, 1);
 }
 
 GrassTileFactory* GrassTileFactory::instance;
@@ -231,7 +272,11 @@ RoadTileFactory::~RoadTileFactory()
 MapLine* RoadTileFactory::getLine(int y, Theme theme)
 {
 	SpriteSheet* spriteSheet = getTile(theme);
-	MapLine* mapLine = new MapLine(y, spriteSheet);
+	RoadLine* mapLine = new RoadLine(y, spriteSheet);
+	// add obstacles here
+	SpriteSheet* obstacleSheet = getObstacle(theme);
+	int numObs = rand() % 11; 
+	mapLine->generateObstacles(numObs, obstacleSheet);
 	return mapLine;
 }
 
@@ -260,7 +305,7 @@ WaterTileFactory::~WaterTileFactory()
 MapLine* WaterTileFactory::getLine(int y, Theme theme)
 {
 	SpriteSheet* spriteSheet = getTile(theme);
-	MapLine* mapLine = new MapLine(y, spriteSheet);
+	WaterLine* mapLine = new WaterLine(y, spriteSheet);
 	return mapLine;
 }
 
@@ -284,7 +329,7 @@ GrassTileFactory::~GrassTileFactory()
 MapLine* GrassTileFactory::getLine(int y, Theme theme)
 {
 	SpriteSheet* spriteSheet = getTile(theme);
-	MapLine* mapLine = new MapLine(y, spriteSheet);
+	GrassLine* mapLine = new GrassLine(y, spriteSheet);
 	// add obstacles here
 	SpriteSheet* obstacleSheet = getObstacle(theme);
 	int numObs = rand() % 11;
@@ -356,6 +401,35 @@ StaticObstacle::~StaticObstacle()
 }
 
 bool StaticObstacle::isPassable()
+{
+	return false;
+}
+
+GrassLine::~GrassLine()
+{
+}
+
+RoadLine::~RoadLine()
+{
+	for (auto ele: obstacles)
+	{
+		delete ele;
+	}
+}
+
+WaterLine::~WaterLine()
+{
+	for (auto ele : obstacles)
+	{
+		delete ele;
+	}
+}
+
+MovingObstacle::~MovingObstacle()
+{
+}
+
+bool MovingObstacle::isPassable()
 {
 	return false;
 }

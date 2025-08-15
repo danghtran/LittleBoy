@@ -34,9 +34,9 @@ protected:
 	std::list<T*> elements;
 };
 
-class MapLine: BaseMap<MapTile>
+class MapLine: public BaseMap<MapTile>
 {
-private:
+protected:
 	int y;
 public:
 	MapLine(int yAxis, SpriteSheet* spriteSheet);
@@ -49,7 +49,7 @@ public:
 	void scroll(int delta);
 	void init();
 	void render(ViewRenderer* viewRenderer);
-	void generateObstacles(int num, SpriteSheet* obstacleSheet);
+	virtual void generateObstacles(int num, SpriteSheet* obstacleSheet) = 0;
 	using BaseMap::clear;
 };
 
@@ -77,6 +77,45 @@ public:
 	StaticObstacle(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : PhysicObject(texture, sprite, render) {};
 	~StaticObstacle();
 	bool isPassable();
+};
+
+class MovingObstacle: public MovableObject
+{
+public:
+	MovingObstacle(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : MovableObject(texture, sprite, render) {};
+	~MovingObstacle();
+	bool isPassable();
+};
+
+class GrassLine : public MapLine
+{
+public:
+	GrassLine(int yAxis, SpriteSheet* spriteSheet) : MapLine(yAxis, spriteSheet) {};
+	~GrassLine();
+	void generateObstacles(int num, SpriteSheet* obstacleSheet) override;
+};
+
+class RoadLine : public MapLine
+{
+private:
+	std::list<MovableObject*> obstacles;
+public:
+	RoadLine(int yAxis, SpriteSheet* spriteSheet) : MapLine(yAxis, spriteSheet) {};
+	~RoadLine();
+	void generateObstacles(int num, SpriteSheet* obstacleSheet) override;
+	void scroll(int delta) override;
+	void render(ViewRenderer* viewRenderer) override;
+};
+
+class WaterLine : public MapLine
+{
+private:
+	std::list<MovableObject*> obstacles;
+public:
+	WaterLine(int yAxis, SpriteSheet* spriteSheet) : MapLine(yAxis, spriteSheet) {};
+	~WaterLine();
+	void generateObstacles(int num, SpriteSheet* obstacleSheet) override;
+	void scroll(int delta) override;
 };
 
 /**
