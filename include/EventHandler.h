@@ -2,7 +2,7 @@
 
 enum EventCode
 {
-	SKIP, QUIT, MV_L, MV_R, MV_U, MV_D
+	SKIP, QUIT, MV_L, MV_R, MV_U, MV_D, RESTART, START
 };
 
 struct EventHandleResult

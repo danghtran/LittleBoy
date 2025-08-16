@@ -24,8 +24,11 @@ int main(int argc, char* argv[]) {
     {
         
         Game game = Game();
+        game.loadTheme(ORIGIN, "res/origin.txt");
+        game.init();
         
         bool quit = false;
+        bool start = false;
         int delay = 1000 / 20;
   
         while (!quit)
@@ -34,25 +37,39 @@ int main(int argc, char* argv[]) {
             
             int startLoop = SDL_GetTicks();
             EventHandleResult res = inputHandler->handle();
-            switch (res.code) 
+            switch (res.code)
             {
             case QUIT:
                 quit = true;
                 break;
-            case MV_U:
-                game.movePlayer(0);
+            case START:
+                start = true;
                 break;
-            case MV_R:
-                game.movePlayer(1);
-                break;
-            case MV_D:
-                game.movePlayer(2);
-                break;
-            case MV_L:
-                game.movePlayer(3);
-                break;
-            } 
-            game.update();
+            }
+            if (start)
+            {
+                switch (res.code)
+                {
+
+                case MV_U:
+                    game.movePlayer(0);
+                    break;
+                case MV_R:
+                    game.movePlayer(1);
+                    break;
+                case MV_D:
+                    game.movePlayer(2);
+                    break;
+                case MV_L:
+                    game.movePlayer(3);
+                    break;
+                case RESTART:
+                    game.reset();
+                    start = false;
+                    break;
+                }
+                game.update();
+            }
             game.render(viewRenderer);
             int endLoop = SDL_GetTicks() - startLoop;
             if (endLoop < delay) 

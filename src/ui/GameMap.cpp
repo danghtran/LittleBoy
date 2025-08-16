@@ -283,22 +283,6 @@ void GameMap::render(ViewRenderer* viewRenderer)
 void GameMap::applyTheme(Theme theme)
 {
 	this->theme = theme;
-	// register theme...
-	ThemeRegister* themeRegister = ThemeRegister::getInstance();
-	themeRegister->registerTile(GRASS, theme, "res/grassnb.png");
-	themeRegister->registerTile(WATER, theme, "res/river.png");
-	themeRegister->registerTile(ROAD, theme, "res/street.png");
-	themeRegister->registerObstacle(GRASS, theme, "res/light.png");
-	themeRegister->registerObstacle(ROAD, theme, "res/car.png");
-	themeRegister->registerObstacle(WATER, theme, "res/water.png");
-	SpriteRegister* spriteRegister = SpriteRegister::getInstance();
-	
-	spriteRegister->initSprite("res/grassnb.png", 2, 2);
-	spriteRegister->initSprite("res/river.png", 1, 1);
-	spriteRegister->initSprite("res/street.png", 1, 1);
-	spriteRegister->initSprite("res/light.png", 2, 2);
-	spriteRegister->initSprite("res/car.png", 1, 1);
-	spriteRegister->initSprite("res/water.png", 1, 1);
 }
 
 bool GameMap::movable(int x, int y)

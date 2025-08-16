@@ -8,10 +8,13 @@ public:
 	Game();
 	~Game();
 	void update();
+	void init();
 	void clear();
 	void render(ViewRenderer* viewRenderer);
 	void initPlayer();
 	void movePlayer(int dir);
+	void loadTheme(Theme theme, std::string file);
+	void reset();
 private:
 	GameMap* map;
 	Player* player;

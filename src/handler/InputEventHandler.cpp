@@ -34,6 +34,11 @@ EventHandleResult InputEventHandler::handle()
             case SDLK_RIGHT:
                 res.code = MV_R;
                 break;
+            case SDLK_r:
+                res.code = RESTART;
+                break;
+            case SDLK_s:
+                res.code = START;
             default:
                 break;
             }
