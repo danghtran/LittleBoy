@@ -85,6 +85,7 @@ public:
 	MovingObstacle(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : MovableObject(texture, sprite, render) {};
 	~MovingObstacle();
 	bool isPassable();
+	void move(int dir);
 };
 
 class GrassLine : public MapLine
@@ -116,6 +117,7 @@ public:
 	~WaterLine();
 	void generateObstacles(int num, SpriteSheet* obstacleSheet) override;
 	void scroll(int delta) override;
+	void render(ViewRenderer* viewRenderer) override;
 };
 
 /**

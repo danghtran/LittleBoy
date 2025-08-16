@@ -4,6 +4,11 @@ MovableObject::~MovableObject()
 {
 }
 
+void MovableObject::setSpeed(int val)
+{
+	speed = val;
+}
+
 PhysicObject::~PhysicObject()
 {
 }

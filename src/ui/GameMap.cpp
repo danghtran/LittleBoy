@@ -129,6 +129,7 @@ void RoadLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
 	rect->x = 100;
 	rect->y = y;
 	MovingObstacle* obstacle = new MovingObstacle(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite(), rect);
+	obstacle->setSpeed(rand() % 5 + 1);
 	obstacles.push_back(obstacle);
 }
 
@@ -137,6 +138,7 @@ void RoadLine::scroll(int delta)
 	for each (auto obs in obstacles)
 	{
 		obs->scroll(delta);
+		obs->move(0);
 	}
 	MapLine::scroll(delta);
 }
@@ -152,12 +154,31 @@ void RoadLine::render(ViewRenderer* viewRenderer)
 
 void WaterLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
 {
-
+	SDL_Rect* rect = new SDL_Rect();
+	rect->h = 50;
+	rect->w = 50;
+	rect->x = 0;
+	rect->y = y;
+	MovingObstacle* obstacle = new MovingObstacle(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite(), rect);
+	obstacles.push_back(obstacle);
 }
 
 void WaterLine::scroll(int delta)
 {
+	for each (auto obs in obstacles)
+	{
+		obs->scroll(delta);
+	}
 	MapLine::scroll(delta);
+}
+
+void WaterLine::render(ViewRenderer* viewRenderer)
+{
+	MapLine::render(viewRenderer);
+	for each (auto obs in obstacles)
+	{
+		obs->draw(viewRenderer);
+	}
 }
 
 bool MapLine::isOutOfScreen(int max)
@@ -243,6 +264,7 @@ void GameMap::applyTheme(Theme theme)
 	themeRegister->registerTile(ROAD, theme, "res/street.png");
 	themeRegister->registerObstacle(GRASS, theme, "res/light.png");
 	themeRegister->registerObstacle(ROAD, theme, "res/car.png");
+	themeRegister->registerObstacle(WATER, theme, "res/water.png");
 	SpriteRegister* spriteRegister = SpriteRegister::getInstance();
 	
 	spriteRegister->initSprite("res/grassnb.png", 2, 2);
@@ -250,6 +272,7 @@ void GameMap::applyTheme(Theme theme)
 	spriteRegister->initSprite("res/street.png", 1, 1);
 	spriteRegister->initSprite("res/light.png", 2, 2);
 	spriteRegister->initSprite("res/car.png", 1, 1);
+	spriteRegister->initSprite("res/water.png", 1, 1);
 }
 
 GrassTileFactory* GrassTileFactory::instance;
@@ -306,6 +329,10 @@ MapLine* WaterTileFactory::getLine(int y, Theme theme)
 {
 	SpriteSheet* spriteSheet = getTile(theme);
 	WaterLine* mapLine = new WaterLine(y, spriteSheet);
+	// add obstacles here
+	SpriteSheet* obstacleSheet = getObstacle(theme);
+	int numObs = rand() % 11;
+	mapLine->generateObstacles(numObs, obstacleSheet);
 	return mapLine;
 }
 
@@ -432,4 +459,13 @@ MovingObstacle::~MovingObstacle()
 bool MovingObstacle::isPassable()
 {
 	return false;
+}
+
+void MovingObstacle::move(int dir)
+{
+	this->renderRect->x += speed;
+	if (renderRect->x > 600)
+	{
+		renderRect->x = -50;
+	}
 }

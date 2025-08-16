@@ -33,6 +33,8 @@ public:
 	MovableObject(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : PhysicObject(texture, sprite, render) {};
 	virtual ~MovableObject();
 	virtual bool isPassable() = 0;
-private:
-
+	virtual void move(int dir) = 0;
+	void setSpeed(int val);
+protected:
+	int speed = 1;
 };
