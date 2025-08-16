@@ -37,6 +37,15 @@ void MapTile::draw(ViewRenderer* viewRenderer)
 	}	
 }
 
+bool MapTile::movable()
+{
+	if (obstacle != NULL)
+	{
+		return obstacle->isPassable();
+	}
+	return true;
+}
+
 template<class T>
 void BaseMap<T>::clear()
 {
@@ -78,6 +87,11 @@ MapLine::~MapLine()
 	clear();
 }
 
+int MapLine::getY()
+{
+	return y;
+}
+
 int MapLine::getPreviousLineY()
 {
 	return y - 50;
@@ -86,6 +100,18 @@ int MapLine::getPreviousLineY()
 bool MapLine::isPassedScreenTop()
 {
 	return y > 0;
+}
+
+bool MapLine::movable(int x)
+{
+	for each (auto ele in elements)
+	{
+		if (ele->getX() == x)
+		{
+			return ele->movable();
+		}
+	}
+	return false;
 }
 
 void MapLine::scroll(int delta)
@@ -273,6 +299,18 @@ void GameMap::applyTheme(Theme theme)
 	spriteRegister->initSprite("res/light.png", 2, 2);
 	spriteRegister->initSprite("res/car.png", 1, 1);
 	spriteRegister->initSprite("res/water.png", 1, 1);
+}
+
+bool GameMap::movable(int x, int y)
+{
+	for each (auto ele in elements)
+	{
+		if (ele->getY() == y)
+		{
+			return ele->movable(x);
+		}
+	}
+	return false;
 }
 
 GrassTileFactory* GrassTileFactory::instance;

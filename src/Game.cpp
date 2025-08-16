@@ -41,16 +41,28 @@ void Game::movePlayer(int dir)
 	switch (dir)
 	{
 	case 0:
-		player->move(0, -50);
+		if (map->movable(player->getX(), player->getY() - 50))
+		{
+			player->move(0, -50);
+		}
 		break;
 	case 1:
-		player->move(50, 0);
+		if (map->movable(player->getX() + 50, player->getY()))
+		{
+			player->move(50, 0);
+		}
 		break;
 	case 2:
-		player->move(0, 50);
+		if (map->movable(player->getX(), player->getY() + 50))
+		{
+			player->move(0, 50);
+		}
 		break;
 	case 3:
-		player->move(-50, 0);
+		if (map->movable(player->getX() - 50, player->getY()))
+		{
+			player->move(-50, 0);
+		}
 		break;
 	}
 }

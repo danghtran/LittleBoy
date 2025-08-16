@@ -10,12 +10,13 @@ using namespace std;
 class MapTile: public Drawable
 {
 public:
-	MapTile(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : Drawable(texture, sprite, render) { obstacle = NULL; };
+	MapTile(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : Drawable(texture, sprite, render) { obstacle = NULL;};
 	~MapTile();
 
 	void scroll(int delta);
 	void setObstacle(SDL_Texture* texture, SDL_Rect* sprite);
 	void draw(ViewRenderer* viewRenderer) override;
+	bool movable();
 private:
 	PhysicObject* obstacle;
 };
@@ -42,10 +43,11 @@ public:
 	MapLine(int yAxis, SpriteSheet* spriteSheet);
 	~MapLine();
 
+	int getY();
 	int getPreviousLineY();
 	bool isOutOfScreen(int max);
-
 	bool isPassedScreenTop();
+	bool movable(int x);
 	void scroll(int delta);
 	void init();
 	void render(ViewRenderer* viewRenderer);
@@ -69,6 +71,7 @@ public:
 	void render(ViewRenderer* viewRenderer);
 	using BaseMap::clear;
 	void applyTheme(Theme theme);
+	bool movable(int x, int y);
 };
 
 class StaticObstacle : public PhysicObject

@@ -40,3 +40,13 @@ void Drawable::draw(ViewRenderer* viewRenderer)
 	}
 	viewRenderer->renderSprite(texture, spriteRect, renderRect);
 }
+
+int Drawable::getX()
+{
+	return renderRect->x;
+}
+
+int Drawable::getY()
+{
+	return renderRect->y;
+}

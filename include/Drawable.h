@@ -14,6 +14,8 @@ public:
 	virtual ~Drawable();
 	void draw();
 	virtual void draw(ViewRenderer* viewRenderer);
+	int getX();
+	int getY();
 };
 
 class PhysicObject: public Drawable
