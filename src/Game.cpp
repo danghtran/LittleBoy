@@ -21,15 +21,15 @@ void Game::initPlayer()
 {
 	SpriteRegister* factory = SpriteRegister::getInstance();
 	/* TODO: register character skins somewhere else */
-	factory->initSprite("res/boy.png", 1, 1);
+	factory->initSprite("res/bear.png", 1, 1);
 
-	SpriteSheet* sprite = factory->getSpriteSheet("res/boy.png");
+	SpriteSheet* sprite = factory->getSpriteSheet("res/bear.png");
 	// Starting position
 	SDL_Rect* render = new SDL_Rect();
 	render->x = 300;
 	render->y = 550;
-	render->w = 60;
-	render->h = 60;
+	render->w = 50;
+	render->h = 50;
 	player = new Player(sprite->getTexture(), sprite->getRandomSprite(), render);
 }
 
@@ -41,6 +41,7 @@ void Game::movePlayer(int dir)
 		if (map->movable(player->getX(), player->getY() - 50))
 		{
 			player->move(0, -50);
+			plPos--;
 		}
 		break;
 	case 1:
@@ -53,6 +54,7 @@ void Game::movePlayer(int dir)
 		if (map->movable(player->getX(), player->getY() + 50))
 		{
 			player->move(0, 50);
+			plPos++;
 		}
 		break;
 	case 3:
@@ -90,6 +92,11 @@ void Game::reset()
 	init();
 }
 
+bool Game::checkCollision()
+{
+	return (*plPos)->checkCollision(player->getX());
+}
+
 Game::~Game()
 {
 	clear();
@@ -107,6 +114,7 @@ void Game::init()
 {
 	map = new GameMap(600, 600);
 	map->init();
+	plPos = map->getInitialPlPos();
 	initPlayer();
 }
 

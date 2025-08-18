@@ -7,14 +7,13 @@
 
 using namespace std;
 
-class MapTile: public Drawable
+class MapTile: public Scrollable
 {
 public:
-	MapTile(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : Drawable(texture, sprite, render) { obstacle = NULL;};
+	MapTile(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : Scrollable(texture, sprite, render) { obstacle = NULL;};
 	~MapTile();
-
-	void scroll(int delta);
-	void setObstacle(SDL_Texture* texture, SDL_Rect* sprite);
+	void scroll(int delta) override;
+	void setObstacle(SDL_Texture* texture, SDL_Rect* sprite, bool isPassable, bool isCollidable);
 	void draw(ViewRenderer* viewRenderer) override;
 	bool movable();
 private:
@@ -48,9 +47,10 @@ public:
 	bool isOutOfScreen(int max);
 	bool isPassedScreenTop();
 	bool movable(int x);
-	void scroll(int delta);
-	void init();
-	void render(ViewRenderer* viewRenderer);
+	void scroll(int delta) override;
+	void init() override;
+	virtual bool checkCollision(int x);
+	void render(ViewRenderer* viewRenderer) override;
 	virtual void generateObstacles(int num, SpriteSheet* obstacleSheet) = 0;
 	using BaseMap::clear;
 };
@@ -66,29 +66,13 @@ private:
 public:
 	GameMap(int w, int h);
 	~GameMap();
-	void init();
-	void scroll(int delta);
-	void render(ViewRenderer* viewRenderer);
+	void init() override;
+	void scroll(int delta) override;
+	void render(ViewRenderer* viewRenderer) override;
 	using BaseMap::clear;
 	void applyTheme(Theme theme);
 	bool movable(int x, int y);
-};
-
-class StaticObstacle : public PhysicObject
-{
-public:
-	StaticObstacle(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : PhysicObject(texture, sprite, render) {};
-	~StaticObstacle();
-	bool isPassable();
-};
-
-class MovingObstacle: public MovableObject
-{
-public:
-	MovingObstacle(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : MovableObject(texture, sprite, render) {};
-	~MovingObstacle();
-	bool isPassable();
-	void move(int dir);
+	std::list<MapLine*>::iterator getInitialPlPos();
 };
 
 class GrassLine : public MapLine
@@ -109,6 +93,7 @@ public:
 	void generateObstacles(int num, SpriteSheet* obstacleSheet) override;
 	void scroll(int delta) override;
 	void render(ViewRenderer* viewRenderer) override;
+	bool checkCollision(int x) override;
 };
 
 class WaterLine : public MapLine
@@ -121,6 +106,7 @@ public:
 	void generateObstacles(int num, SpriteSheet* obstacleSheet) override;
 	void scroll(int delta) override;
 	void render(ViewRenderer* viewRenderer) override;
+	bool checkCollision(int x) override;
 };
 
 /**

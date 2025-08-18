@@ -18,24 +18,37 @@ public:
 	int getY();
 };
 
-class PhysicObject: public Drawable
+class Scrollable : public Drawable
 {
 public:
-	PhysicObject(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : Drawable(texture, sprite, render) {};
-	virtual ~PhysicObject();
-	virtual bool isPassable() = 0;
+	Scrollable(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : Drawable(texture, sprite, render) {};
+	virtual ~Scrollable() {};
 	virtual void scroll(int delta);
-private:
+};
 
+class PhysicObject: public Scrollable
+{
+protected:
+	bool passable = true;
+	bool collidable = false;
+public:
+	PhysicObject(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render, bool isPassable, bool isCollidable) : Scrollable(texture, sprite, render) 
+	{
+		passable = isPassable; 
+		collidable = isCollidable;
+	};
+	~PhysicObject();
+	bool isCollided(int x);
+	bool isPassable();
+	bool isCollidable();
 };
 
 class MovableObject: public PhysicObject
 {
 public:
-	MovableObject(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : PhysicObject(texture, sprite, render) {};
-	virtual ~MovableObject();
-	virtual bool isPassable() = 0;
-	virtual void move(int dir) = 0;
+	MovableObject(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render, bool isPassable, bool isCollidable) : PhysicObject(texture, sprite, render, isPassable, isCollidable) {};
+	~MovableObject();
+	void move(int dir);
 	void setSpeed(int val);
 protected:
 	int speed = 1;

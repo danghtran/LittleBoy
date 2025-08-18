@@ -15,7 +15,9 @@ public:
 	void movePlayer(int dir);
 	void loadTheme(Theme theme, std::string file);
 	void reset();
+	bool checkCollision();
 private:
 	GameMap* map;
 	Player* player;
+	std::list<MapLine*>::iterator plPos;
 };

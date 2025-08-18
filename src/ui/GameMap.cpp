@@ -18,14 +18,14 @@ void MapTile::scroll(int delta)
 	}
 }
 
-void MapTile::setObstacle(SDL_Texture* texture, SDL_Rect* sprite)
+void MapTile::setObstacle(SDL_Texture* texture, SDL_Rect* sprite, bool isPassable, bool isCollidable)
 {
 	SDL_Rect* rect = new SDL_Rect();
 	rect->h = this->renderRect->h;
 	rect->w = this->renderRect->w;
 	rect->x = this->renderRect->x;
 	rect->y = this->renderRect->y;
-	obstacle = new StaticObstacle(texture, sprite, rect);
+	obstacle = new PhysicObject(texture, sprite, rect, isPassable, isCollidable);
 }
 
 void MapTile::draw(ViewRenderer* viewRenderer)
@@ -128,6 +128,11 @@ void MapLine::init()
 
 }
 
+bool MapLine::checkCollision(int x)
+{
+	return false;
+}
+
 void MapLine::render(ViewRenderer* viewRenderer)
 {
 	for each (MapTile* tile in elements)
@@ -142,7 +147,7 @@ void GrassLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
 	{
 		if (rand() % 5 == 0)
 		{
-			(*iter)->setObstacle(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite());
+			(*iter)->setObstacle(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite(), false, false);
 		}
 	}
 }
@@ -154,7 +159,7 @@ void RoadLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
 	rect->w = 50;
 	rect->x = 100;
 	rect->y = y;
-	MovingObstacle* obstacle = new MovingObstacle(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite(), rect);
+	MovableObject* obstacle = new MovableObject(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite(), rect, true, true);
 	obstacle->setSpeed(rand() % 5 + 1);
 	obstacles.push_back(obstacle);
 }
@@ -178,6 +183,18 @@ void RoadLine::render(ViewRenderer* viewRenderer)
 	}
 }
 
+bool RoadLine::checkCollision(int x)
+{
+	for each (auto obs in obstacles)
+	{
+		if (obs->isCollided(x))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void WaterLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
 {
 	SDL_Rect* rect = new SDL_Rect();
@@ -185,7 +202,7 @@ void WaterLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
 	rect->w = 50;
 	rect->x = 0;
 	rect->y = y;
-	MovingObstacle* obstacle = new MovingObstacle(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite(), rect);
+	MovableObject* obstacle = new MovableObject(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite(), rect, true, false);
 	obstacles.push_back(obstacle);
 }
 
@@ -205,6 +222,18 @@ void WaterLine::render(ViewRenderer* viewRenderer)
 	{
 		obs->draw(viewRenderer);
 	}
+}
+
+bool WaterLine::checkCollision(int x)
+{
+	for each (auto obs in obstacles)
+	{
+		if (obs->isCollided(x))
+		{
+			return obs->isCollidable();
+		}
+	}
+	return true;
 }
 
 bool MapLine::isOutOfScreen(int max)
@@ -295,6 +324,11 @@ bool GameMap::movable(int x, int y)
 		}
 	}
 	return false;
+}
+
+std::list<MapLine*>::iterator GameMap::getInitialPlPos()
+{
+	return --elements.end();
 }
 
 GrassTileFactory* GrassTileFactory::instance;
@@ -445,15 +479,6 @@ std::string TileFactory::getTilePath(Theme theme)
 	return themeRegister->getTilePath(getType(), theme);
 }
 
-StaticObstacle::~StaticObstacle()
-{
-}
-
-bool StaticObstacle::isPassable()
-{
-	return false;
-}
-
 GrassLine::~GrassLine()
 {
 }
@@ -474,20 +499,4 @@ WaterLine::~WaterLine()
 	}
 }
 
-MovingObstacle::~MovingObstacle()
-{
-}
 
-bool MovingObstacle::isPassable()
-{
-	return false;
-}
-
-void MovingObstacle::move(int dir)
-{
-	this->renderRect->x += speed;
-	if (renderRect->x > 600)
-	{
-		renderRect->x = -50;
-	}
-}

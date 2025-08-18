@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
         game.init();
         
         bool quit = false;
-        bool start = false;
+        bool idle = true;
         int delay = 1000 / 20;
   
         while (!quit)
@@ -43,10 +43,10 @@ int main(int argc, char* argv[]) {
                 quit = true;
                 break;
             case START:
-                start = true;
+                idle = false;
                 break;
             }
-            if (start)
+            if (!idle)
             {
                 switch (res.code)
                 {
@@ -65,8 +65,13 @@ int main(int argc, char* argv[]) {
                     break;
                 case RESTART:
                     game.reset();
-                    start = false;
+                    idle = true;
                     break;
+                }
+                if (game.checkCollision())
+                {
+                    game.reset();
+                    idle = true;
                 }
                 game.update();
             }
