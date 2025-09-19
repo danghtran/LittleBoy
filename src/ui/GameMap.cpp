@@ -169,7 +169,7 @@ void RoadLine::scroll(int delta)
 	for each (auto obs in obstacles)
 	{
 		obs->scroll(delta);
-		obs->move(0);
+		obs->move(10, 0);
 	}
 	MapLine::scroll(delta);
 }
@@ -202,7 +202,8 @@ void WaterLine::generateObstacles(int num, SpriteSheet* obstacleSheet)
 	rect->w = 50;
 	rect->x = 0;
 	rect->y = y;
-	MovableObject* obstacle = new MovableObject(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite(), rect, true, false);
+	DraggableObject* obstacle = new DraggableObject(obstacleSheet->getTexture(), obstacleSheet->getRandomSprite(), rect);
+	obstacle->setSpeed(rand() % 7);
 	obstacles.push_back(obstacle);
 }
 
@@ -211,6 +212,7 @@ void WaterLine::scroll(int delta)
 	for each (auto obs in obstacles)
 	{
 		obs->scroll(delta);
+		obs->move(5, 0);
 	}
 	MapLine::scroll(delta);
 }

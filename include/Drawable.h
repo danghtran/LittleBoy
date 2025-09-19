@@ -48,8 +48,17 @@ class MovableObject: public PhysicObject
 public:
 	MovableObject(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render, bool isPassable, bool isCollidable) : PhysicObject(texture, sprite, render, isPassable, isCollidable) {};
 	~MovableObject();
-	void move(int dir);
+	virtual void move(int delX, int delY);
 	void setSpeed(int val);
 protected:
 	int speed = 1;
+};
+
+class DraggableObject: public MovableObject
+{
+public:
+	DraggableObject(SDL_Texture* texture, SDL_Rect* sprite, SDL_Rect* render) : MovableObject(texture, sprite, render, true, false) {};
+	~DraggableObject();
+protected:
+	MovableObject* obj = NULL;
 };

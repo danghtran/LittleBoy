@@ -105,7 +105,7 @@ Game::~Game()
 void Game::update()
 {
 	// adjust speed
-	int speed = 1;
+	int speed = 3;
 	map->scroll(speed);
 	player->move(0, speed);
 }

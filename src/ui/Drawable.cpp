@@ -51,9 +51,10 @@ int Drawable::getY()
 	return renderRect->y;
 }
 
-void MovableObject::move(int dir)
+void MovableObject::move(int delX, int delY)
 {
-	this->renderRect->x += speed;
+	this->renderRect->x += speed * delX;
+	this->renderRect->y += speed * delY;
 	if (renderRect->x > 600)
 	{
 		renderRect->x = -50;
@@ -77,4 +78,8 @@ bool PhysicObject::isPassable()
 bool PhysicObject::isCollidable()
 {
 	return collidable;
+}
+
+DraggableObject::~DraggableObject()
+{
 }
